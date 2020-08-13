@@ -15,7 +15,7 @@ const leadSchema = new mongoose.Schema({
     type: String,
     validate: {
       validator: function(v) {
-        return /\d{3}-\d{3}-\d{4}/.test(v);
+        return /\d{3}\d{3}\d{4}/.test(v);
       },
       message: props => `${props.value} is not a valid phone number!`
     },
@@ -40,30 +40,31 @@ const leadSchema = new mongoose.Schema({
   },
   gender: {
     type: Number,
-    required: [true, 'A lead must have a gender']
+    required: [false, 'A lead must have a gender']
   },
   address: {
     type: String,
     trim: true,
-    required: [true, 'A lead must have an ID number']
+    required: [false, 'A lead must have an ID number']
   },
   town: {
     type: String,
     trim: true,
-    required: [true, 'A lead enter a town']
+    required: [false, 'A lead enter a town']
   },
   city: {
     type: String,
     trim: true,
-    required: [true, 'A lead must enter a city']
+    required: [false, 'A lead must enter a city']
   },
   province: {
     type: String,
     trim: true,
-    required: [true, 'A province must be selected']
+    required: [false, 'A province must be selected']
   },
   stations: [String],
   referrer: String,
+  slug: String,
   createdAt: {
     type: Date,
     default: Date.now(),
@@ -72,11 +73,27 @@ const leadSchema = new mongoose.Schema({
   }
 });
 
-leadSchema.pre('find', function(next) {
+// Document Middleware
+
+// leadSchema.post('save', function(next) {
+//   console.log(doc);
+//   next();
+// });
+
+//Query Middleware
+
+leadSchema.pre(/^find/, function(next) {
   this.find();
+
+  this.start = Date.now();
   next();
 });
 
+leadSchema.post(/^find/, function(docs, next) {
+  console.log(`Query took ${Date.now() - this.start} milliseconds!`);
+  console.log(docs);
+  next();
+});
 const Lead = mongoose.model('Lead', leadSchema);
 
 module.exports = Lead;

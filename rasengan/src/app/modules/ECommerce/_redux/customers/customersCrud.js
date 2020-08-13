@@ -19,7 +19,7 @@ export function getCustomerById(customerId) {
 // Method from server should return QueryResultsModel(items: any[], totalsCount: number)
 // items => filtered/sorted result
 export function findCustomers(queryParams) {
-  return axios.get(`${CUSTOMERS_URL}/find`, { queryParams });
+  return axios.post(`${CUSTOMERS_URL}/find`, { queryParams });
 }
 
 // UPDATE => PUT: update the customer on the server
